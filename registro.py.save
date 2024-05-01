@@ -1,0 +1,44 @@
+#!/usr/bin/python3
+#importamos el modulo para manejar el CGI
+import cgi, cgitb
+import sqlite3
+import base64
+#Creamos instancia para almacenar
+form=cgi.FieldStorage()
+#Obtener los datos del formulario
+id=form.getvalue('id')
+nombre=form.getvalue('name')
+usuario=form.getvalue('user')
+correo=form.getvalue('email')
+password=form.getvalue('pass')
+imagen = form.getvalue('img')
+if 'imagen' in form and form['imagen'].filename:
+    imagen = form['imagen']
+    data = imagen.file.read()
+    encoded_image = base64.b64encode(data)
+else:
+    encoded_image = None
+
+print ("Content-type:text/html charset=utf-8\n")
+print ("<html><head><title>Respuesta del Registro</title></head><body>")
+print ("<h2>Gracias por usar nuestra plataforma</h2>")
+conn = sqlite3.connect('fi.db')
+sql0 = "SELECT EMAIL FROM TUTORIAS WHERE EMAIL = '%s'" % correo
+cursor=conn.cursor()
+cursor.execute(sql0)
+retorno=cursor.fetchone()
+if retorno:
+	print ("<h2>Lo sentimos el usuario que intentas ingresar ya esta registrado, su correo figura en nuestros datos</h2>")
+	print ("<h2>Por favor, envie un correo a nuestro administrador a ttt@ttt.rr</h2>")
+	print ("<h2>Agradecemos su paciencia </h2>")
+	print ("</body></html>")
+else:
+	retorno="None"
+	#print retorno
+	sql1 = "INSERT INTO TUTORIAS VALUES('%s','%s','%s','%s','%s', ?)" % (id, nombre, usuario, correo, password) 
+	conn.execute(sql1, [sqlite3.Binary(encoded_image)]if encoded_image is not None else [None]);
+	conn.commit()
+	print ("<h2>Su Registro fue exitoso</h2>")
+	<print ("<h2>Ahora Ingresa a nuestra plataforma regresando a la web principal") 
+	print ("</body></html>")
+conn.close()
