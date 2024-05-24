@@ -1,0 +1,6 @@
+AddHandler cgi-script .py
+Options +ExecCGI
+
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([^\.]+)$ $1.py [NC,L]
